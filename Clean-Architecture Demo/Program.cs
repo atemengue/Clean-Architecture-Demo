@@ -2,6 +2,8 @@ using Application.Services.Categories;
 using Application.Services.Events;
 using Application.Services.Orders;
 using Infrastructure;
+using Infrastructure.Persistence;
+using Infrastructure.Persistence.Seed;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await AppDbContextSeed.SeedAsync(context);
 }
 
 app.UseHttpsRedirection();
